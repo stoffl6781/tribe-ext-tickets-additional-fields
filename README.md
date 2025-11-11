@@ -49,6 +49,12 @@ function custom_tickets_additional_fields( $ticket_fields ) {
 			'description' => esc_html__( 'Insert the youtube embed of the video they have access to when they purchase the ticket.' ),
 		];
 
+		$ticket_fields['event_date'] = [
+			'type'        => 'date',
+			'label'       => esc_html__( 'Event date' ),
+			'description' => esc_html__( 'Insert the event date.' ),
+		];
+
 		return $ticket_fields;
 }
 
@@ -117,3 +123,4 @@ function my_custom_additional_field_shortcode_printing( $html, $ticket_id, $fiel
 * `email` - Email (when being printed for the shortcode will add the HTML for the email link).
 * `number` - Number.
 * `checkbox` - Checkbox.
+* `date` - HTML5 Date selector.
