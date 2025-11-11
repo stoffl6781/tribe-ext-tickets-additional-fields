@@ -83,6 +83,9 @@ class Tribe_Tickets_Additional_Field extends \Tribe\Shortcode\Shortcode_Abstract
 			case 'email':
 				$html = $this->get_email_render( $ticket_id, $field );
 				break;
+			case 'date':
+				$html = $this->get_date_render( $ticket_id, $field );
+				break;
 			default:
 				$html = $meta->get_field_value( $ticket_id, $meta->get_field_id( $field ), true );
 		}
@@ -132,4 +135,30 @@ class Tribe_Tickets_Additional_Field extends \Tribe\Shortcode\Shortcode_Abstract
 		return '<a href="mailto:' . $email . '">' . $email . '</a>';
 	}
 
-}
+	/**
+	 * Gets the additional render, when it's Date type
+	 *
+	 * @param WP_Post|int $ticket   the post/event we're viewing.
+	 * @param string      $field_id the additional field we want to retrieve.
+	 *
+	 * @return string The resulting HTML.
+	 */
+	public function get_date_render( $ticket_id, $field ) {
+		$meta  = tribe( 'tickets.additional-fields.fields' );
+		$value = $meta->get_field_value( $ticket_id, $meta->get_field_id( $field ), true );
+		$value = is_string( $value ) ? trim( $value ) : '';
+
+		if ( $value !== '' && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
+			try {
+				$dt = new \DateTimeImmutable( $value, wp_timezone() );
+				$format = apply_filters( 'tribe_ext_tickets_additional_fields_date_display_format', 'd.m.Y' );
+				return esc_html( $dt->format( $format ) );
+			} catch ( \Exception $e ) {
+				return esc_html( $value );
+			}
+		} else {
+			return esc_html( $value );
+		}
+	}
+
+	}
