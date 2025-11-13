@@ -55,6 +55,20 @@ function custom_tickets_additional_fields( $ticket_fields ) {
 			'description' => esc_html__( 'Insert the event date.' ),
 		];
 
+		$ticket_fields['event_type'] = [
+			'type'        => 'select',
+			'label'       => esc_html__( 'Event type' ),
+			'description' => esc_html__( 'Choose the event type.' ),
+			// value => label
+			'options'     => [
+				'workshop' => esc_html__( 'Workshop' ),
+				'course'   => esc_html__( 'Course'),
+				'webinar'  => esc_html__( 'Webinar'),
+			],
+			// optional:
+			'placeholder' => esc_html__( 'Please choose…' ),
+		];
+
 		return $ticket_fields;
 }
 
@@ -124,3 +138,4 @@ function my_custom_additional_field_shortcode_printing( $html, $ticket_id, $fiel
 * `number` - Number.
 * `checkbox` - Checkbox.
 * `date` - HTML5 Date selector.
+* `select` - Dropdown select. Requires an `options` array with `value => label` pairs.

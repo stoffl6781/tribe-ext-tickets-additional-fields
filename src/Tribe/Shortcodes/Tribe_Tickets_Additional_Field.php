@@ -86,6 +86,9 @@ class Tribe_Tickets_Additional_Field extends \Tribe\Shortcode\Shortcode_Abstract
 			case 'date':
 				$html = $this->get_date_render( $ticket_id, $field );
 				break;
+			case 'select':
+				$html = $this->get_select_render( $ticket_id, $field );
+				break;
 			default:
 				$html = $meta->get_field_value( $ticket_id, $meta->get_field_id( $field ), true );
 		}
@@ -161,4 +164,48 @@ class Tribe_Tickets_Additional_Field extends \Tribe\Shortcode\Shortcode_Abstract
 		}
 	}
 
+	/**
+	 * Gets the additional render, when it's Select type.
+	 *
+	 * @param int|WP_Post $ticket The ticket.
+	 * @param string      $field  Field key.
+	 *
+	 * @return string
+	 */
+	public function get_select_render( $ticket_id, $field ) {
+		$meta  = tribe( 'tickets.additional-fields.fields' );
+
+		$field_id = $meta->get_field_id( $field );
+		$value    = $meta->get_field_value( $ticket_id, $field_id, true );
+		$value    = is_string( $value ) ? trim( $value ) : '';
+
+		if ( $value === '' ) {
+			return '';
+		}
+
+		// Feld-Definitionen über den bekannten Filter holen.
+		$fields = apply_filters( 'tribe_ext_tickets_additional_fields', [] );
+
+		if ( isset( $fields[ $field ]['options'][ $value ] ) ) {
+			$label = $fields[ $field ]['options'][ $value ]; // Label aus options
+		} else {
+			$label = $value; // Fallback: Key direkt
+		}
+
+		/**
+		 * Filter the output of select field additional field.
+		 */
+		$label = apply_filters(
+			'tribe_ext_tickets_additional_fields_select_display',
+			$label,
+			$ticket_id,
+			$field,
+			$value
+		);
+
+		return esc_html( (string) $label );
 	}
+
+
+
+}
